@@ -37,7 +37,7 @@ def get_default_image_loader():
 def video_loader(video_dir_path, frame_indices, image_loader):
     video = []
     for i in frame_indices:
-        image_path = os.path.join(video_dir_path, 'image_{:05d}.jpg'.format(i))
+        image_path = os.path.join(video_dir_path, '{:05d}.jpg'.format(i))
         if os.path.exists(image_path):
             video.append(image_loader(image_path))
         else:
@@ -48,6 +48,8 @@ def video_loader(video_dir_path, frame_indices, image_loader):
 
 def get_default_video_loader():
     image_loader = get_default_image_loader()
+   
+    print(functools.partial(video_loader, image_loader=image_loader))
     return functools.partial(video_loader, image_loader=image_loader)
 
 
@@ -84,14 +86,19 @@ def get_video_names_and_annotations(data, subset):
 
 def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                  sample_duration):
+  
     data = load_annotation_data(annotation_path)
+ 
+   
     video_names, annotations = get_video_names_and_annotations(data, subset)
+
     class_to_idx = get_class_labels(data)
     idx_to_class = {}
     for name, label in class_to_idx.items():
         idx_to_class[label] = name
 
     dataset = []
+    print("len(video_names) : ", len(video_names))
     for i in range(len(video_names)):
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
@@ -103,6 +110,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
             continue
 
         n_frames_file_path = os.path.join(video_path, 'n_frames')
+
         n_frames = int(load_value_file(n_frames_file_path))
         if n_frames <= 0:
             continue
@@ -170,7 +178,7 @@ class Moments(data.Dataset):
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
             sample_duration)
-
+       
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
         self.target_transform = target_transform
@@ -186,12 +194,17 @@ class Moments(data.Dataset):
         path = self.data[index]['video']
 
         frame_indices = self.data[index]['frame_indices']
+
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
+      
         clip = self.loader(path, frame_indices)
+      
         if self.spatial_transform is not None:
             self.spatial_transform.randomize_parameters()
             clip = [self.spatial_transform(img) for img in clip]
+
+      
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
         target = self.data[index]

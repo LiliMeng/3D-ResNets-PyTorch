@@ -50,6 +50,10 @@ def convert_kinetics_csv_to_moments_json(categories_path, train_csv_path, val_cs
 
     dst_data = {}
     dst_data['labels'] = labels
+    print("labels")
+    print(labels) 
+    print("train_database")
+    print(train_database)
     dst_data['database'] = {}
     dst_data['database'].update(train_database)
     dst_data['database'].update(val_database) 
@@ -60,7 +64,7 @@ def convert_kinetics_csv_to_moments_json(categories_path, train_csv_path, val_cs
 if __name__=="__main__":
   categories_path = "/home/lili/Video/3D-ResNets-PyTorch/data/moments/moments_categories.txt"
   train_csv_path = "/home/lili/Video/3D-ResNets-PyTorch/data/moments/moments_15_train_list.csv"
-  #val_csv_path = "/home/lili/Video/3D-ResNets-PyTorch/data/moments/moments_15_train_list.csv"
+  #train_csv_path  = "/home/lili/Video/3D-ResNets-PyTorch/data/moments/moments_raw_val_list.csv"
   val_csv_path = "/home/lili/Video/3D-ResNets-PyTorch/data/moments/moments_raw_val_list.csv"
   dst_json_path = "/media/lili/fce9875a-a5c8-4c35-8f60-db60be29ea5d/3D-ResNets-PyTorch/data/moments.json"
  
