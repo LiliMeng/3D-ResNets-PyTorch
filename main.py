@@ -46,6 +46,7 @@ if __name__ == '__main__':
 
     model, parameters = generate_model(opt)
     print(model)
+    model = model.cuda()
     criterion = nn.CrossEntropyLoss()
     if not opt.no_cuda:
         criterion = criterion.cuda()
